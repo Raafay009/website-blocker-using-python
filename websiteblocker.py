@@ -22,3 +22,35 @@ else:
     sys.exit(1)
 
 
+def block(answer):
+    while True:
+        with open(host_file, 'r+') as hostentry:
+            hosts = hostentry.read()
+            for url in sites_to_be_blocked:
+                if url not in hosts:
+                    hostentry.write(redirect + ' ' + url + '\n')
+        try:
+            time.sleep(50)
+        except KeyboardInterrupt:
+            quitting = input("Do you really want to disable content blocking?[Y/y or N/n]")
+            if (quitting == "Y" or quitting == "y"):
+                with open(host_file, 'r+') as hostentry:
+                    hosts = hostentry.readlines()
+                    hostentry.seek(0)
+                    for host in hosts:
+                        if not any(url in host for url in sites_to_be_blocked):
+                            hostentry.write(host)
+                    hostentry.truncate()
+                print("Cool!!\nhave a great time!")
+                sys.exit(1)
+            else:
+                continue
+
+if __name__ == '__main__':
+    answer = input("Do you want to enable content filtering(you need to focus)?[Y/y or N/n]")
+
+    if (answer == "Y" or answer == "y"):
+        print("Great\nFetching the blocked URLs from your Database(urllist.txt).")
+        time.sleep(1)
+        print("\nDefault blocking has been enabled as per request.")
+        block(answer)
